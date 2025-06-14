@@ -6,13 +6,19 @@ use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
+    public $books = [ 
+        ['id' => '1', 'title' => 'Motivation', 'author' => 'MengLy'],
+        ['id' => '2', 'title' => 'Stop comparing', 'author' => 'Lymeng'],
+    ];
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        return response()->json($this->books);
     }
+
 
     /**
      * Show the form for creating a new resource.
