@@ -1,31 +1,49 @@
 <?php
 
 namespace App\Http\Controllers;
-use Illuminate\Http\JsonRequest;
+
 use Illuminate\Http\Request;
 
 class BookController extends Controller
 {   
+    // In-memory book list (simulates a database)
     public $books = [ 
-        ['id' => '1', 'title' => 'Book One', 'authorId' => 'a1', 'isbn' => '111', 'publicationYear' => 2000, 'genre' => 'Fiction', 'availableCopies' => 3],
-        ['id' => '2', 'title' => 'Book Two', 'authorId' => 'a2', 'isbn' => '222', 'publicationYear' => 2005, 'genre' => 'Sci-fi', 'availableCopies' => 5],
+        [
+            'id' => '1',
+            'title' => 'Book One',
+            'authorId' => 'a1',
+            'isbn' => '111',
+            'publicationYear' => 2000,
+            'genre' => 'Fiction',
+            'availableCopies' => 3
+        ],
+        [
+            'id' => '2',
+            'title' => 'Book Two',
+            'authorId' => 'a2',
+            'isbn' => '222',
+            'publicationYear' => 2005,
+            'genre' => 'Sci-fi',
+            'availableCopies' => 5
+        ],
     ];
 
     /**
-     * Display a listing of the resource.
+     * List all books.
+     * Route: GET /books
      */
     public function index()
     {
         return response()->json($this->books);
     }
 
-
     /**
-     * Show the form for creating a new resource.
+     * Create a new book.
+     * Route: POST /books/create
      */
     public function create(Request $request)
     {
-         // Validate required fields
+        // Validate incoming request data
         $validated = $request->validate([
             'title' => 'required|string',
             'authorId' => 'required',
@@ -35,7 +53,7 @@ class BookController extends Controller
             'availableCopies' => 'required|integer',
         ]);
 
-        // Simulate saving by pushing to the array
+        // Create a new book array
         $newBook = [
             'id' => count($this->books) + 1,
             'title' => $validated['title'],
@@ -46,52 +64,63 @@ class BookController extends Controller
             'availableCopies' => $validated['availableCopies'],
         ];
 
-        // In a real app, you'd save this to a database.
+        // Add the new book to the books array (simulating DB insert)
         $this->books[] = $newBook;
 
+        // Return the newly created book with 201 status
         return response()->json($newBook, 201);
     }
 
-
     /**
-     * Display the specified resource.
+     * Show a single book by ID.
+     * Route: GET /books/{id}
      */
     public function show(string $id)
     {
-         $book = collect($this->books)->firstWhere('id', $id);
+        // Find the book by ID
+        $book = collect($this->books)->firstWhere('id', $id);
+
+        // Return the book if found, otherwise 404
         return $book
             ? response()->json($book)
             : response()->json(['message' => 'Book not found'], 404);
-    
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update book details by ID.
+     * Route: PUT/PATCH /books/{id}
      */
     public function update(Request $request, string $id)
     {
-    foreach ($this->books as &$book) {
-        if ($book['id'] == $id) {
-            $book = array_merge($book, $request->all());
-            return response()->json($book);
+        // Loop through books and find the matching one
+        foreach ($this->books as &$book) {
+            if ($book['id'] == $id) {
+                // Merge new values into the book
+                $book = array_merge($book, $request->all());
+                return response()->json($book);
+            }
         }
+
+        // Book not found
+        return response()->json(['error' => 'Book not found'], 404);
     }
 
-    return response()->json(['error' => 'Book not found'], 404);
-}
-
-
     /**
-     * Remove the specified resource from storage.
+     * Delete a book by ID.
+     * Route: DELETE /books/{id}
      */
     public function destroy(string $id)
     {
+        // Loop through books and find the one to delete
         foreach ($this->books as $index => $book) {
-        if ($book['id'] == $id) {
-            array_splice($this->books, $index, 1);
-            return response()->json(['message' => 'Deleted']);
+            if ($book['id'] == $id) {
+                // Remove the book from the array
+                array_splice($this->books, $index, 1);
+                return response()->json(['message' => 'Deleted']);
+            }
         }
-    }
-    return response()->json(['error' => 'Book not found'], 404);
+
+        // Book not found
+        return response()->json(['error' => 'Book not found'], 404);
     }
 }
