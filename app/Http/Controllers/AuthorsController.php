@@ -31,15 +31,7 @@ class AuthorsController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function create(Request $request)
     {
           $validated = $request->validate([
             'name' => 'required|string',
@@ -53,6 +45,25 @@ class AuthorsController extends Controller
         $this->authors[] = $newAuthor;
 
         return response()->json($newAuthor, 201);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        //   $validated = $request->validate([
+        //     'name' => 'required|string',
+        // ]);
+
+        // $newAuthor = [
+        //     'id' => count($this->authors) + 1,
+        //     'name' => $validated['name'],
+        // ];
+
+        // $this->authors[] = $newAuthor;
+
+        // return response()->json($newAuthor, 201);
     }
 
     /**

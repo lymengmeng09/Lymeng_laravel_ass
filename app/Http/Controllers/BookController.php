@@ -23,21 +23,16 @@ class BookController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-        
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        // Validate required fields
+         // Validate required fields
         $validated = $request->validate([
             'title' => 'required|string',
             'authorId' => 'required',
             'isbn' => 'required|string',
+            'publicationYear' => 'required|integer',
+            'genre'=> 'required|string',
+            'availableCopies' => 'required|integer',
         ]);
 
         // Simulate saving by pushing to the array
@@ -46,14 +41,17 @@ class BookController extends Controller
             'title' => $validated['title'],
             'authorId' => $validated['authorId'],
             'isbn' => $validated['isbn'],
+            'publicationYear' => $validated['publicationYear'],
+            'genre' => $validated['genre'],
+            'availableCopies' => $validated['availableCopies'],
         ];
 
         // In a real app, you'd save this to a database.
         $this->books[] = $newBook;
 
         return response()->json($newBook, 201);
-    
     }
+
 
     /**
      * Display the specified resource.
@@ -65,14 +63,6 @@ class BookController extends Controller
             ? response()->json($book)
             : response()->json(['message' => 'Book not found'], 404);
     
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
     }
 
     /**
