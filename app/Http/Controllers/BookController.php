@@ -96,6 +96,12 @@ class BookController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        foreach ($this->books as $index => $book) {
+        if ($book['id'] == $id) {
+            array_splice($this->books, $index, 1);
+            return response()->json(['message' => 'Deleted']);
+        }
+    }
+    return response()->json(['error' => 'Book not found'], 404);
     }
 }
