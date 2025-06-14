@@ -80,8 +80,16 @@ class BookController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+    foreach ($this->books as &$book) {
+        if ($book['id'] == $id) {
+            $book = array_merge($book, $request->all());
+            return response()->json($book);
+        }
     }
+
+    return response()->json(['error' => 'Book not found'], 404);
+}
+
 
     /**
      * Remove the specified resource from storage.
