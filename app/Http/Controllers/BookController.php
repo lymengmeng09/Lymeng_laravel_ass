@@ -1,14 +1,14 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Http\JsonRequest;
 use Illuminate\Http\Request;
 
 class BookController extends Controller
-{
+{   
     public $books = [ 
-        ['id' => '1', 'title' => 'Motivation', 'author' => 'MengLy'],
-        ['id' => '2', 'title' => 'Stop comparing', 'author' => 'Lymeng'],
+        ['id' => '1', 'title' => 'Book One', 'authorId' => 'a1', 'isbn' => '111', 'publicationYear' => 2000, 'genre' => 'Fiction', 'availableCopies' => 3],
+        ['id' => '2', 'title' => 'Book Two', 'authorId' => 'a2', 'isbn' => '222', 'publicationYear' => 2005, 'genre' => 'Sci-fi', 'availableCopies' => 5],
     ];
 
     /**
@@ -25,7 +25,7 @@ class BookController extends Controller
      */
     public function create()
     {
-        //
+        
     }
 
     /**
@@ -33,7 +33,26 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Validate required fields
+        $validated = $request->validate([
+            'title' => 'required|string',
+            'authorId' => 'required',
+            'isbn' => 'required|string',
+        ]);
+
+        // Simulate saving by pushing to the array
+        $newBook = [
+            'id' => count($this->books) + 1,
+            'title' => $validated['title'],
+            'authorId' => $validated['authorId'],
+            'isbn' => $validated['isbn'],
+        ];
+
+        // In a real app, you'd save this to a database.
+        $this->books[] = $newBook;
+
+        return response()->json($newBook, 201);
+    
     }
 
     /**
