@@ -15,14 +15,23 @@ use App\Http\Controllers\UsersController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-//Books route
-Route::get('/books', [BookController::class, 'index']);
-Route::get('/books/{id}', [BookController::class, 'show']);
-Route::post('/books/create', [BookController::class, 'create']);
-Route::put('/books/{id}', [BookController::class, 'update']);
-Route::delete('/books/{id}', [BookController::class, 'destroy']);
+// Books route
+// Route::get('/books', [BookController::class, 'index']);
+// Route::get('/books/{id}', [BookController::class, 'show']);
+// Route::post('/books/create', [BookController::class, 'create']);
+// Route::put('/books/{id}', [BookController::class, 'update']);
+// Route::delete('/books/{id}', [BookController::class, 'destroy']);
 
-//Authors route
+Route::prefix('/books')->group(function(){
+    Route::get('/',[BookController::class,"index"])->name("/allbooks");
+    Route::get("/count",[BookController::class, 'CountBooks']);
+    Route::post("/create",[BookController::class, 'create']);
+    Route::put("/edit/{id}",[BookController::class, 'edit']);
+    Route::delete("/delete/{id}", [BookController::class, 'destroy']);
+    Route::get("/show/{id}", [BookController::class, 'show']);
+});
+
+// Authors route
 Route::get('/authors', [AuthorsController::class, 'index']);
 Route::get('/authors/{id}', [AuthorsController::class, 'show']);
 Route::post('/authors/create', [AuthorsController::class, 'create']);
@@ -35,6 +44,8 @@ Route::get('/users/{id}', [UsersController::class, 'show']);
 Route::post('/users/create', [UsersController::class, 'create']);
 Route::put('/users/{id}', [UsersController::class, 'update']);
 Route::delete('/users/{id}', [UsersController::class, 'destroy']);
+
+
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
