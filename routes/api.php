@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\http\Controllers\BookController;
 use App\Http\Controllers\AuthorsController;
-use App\Http\Controllers\UsersController;
+use App\Http\Controllers\MemberController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -25,25 +25,28 @@ use App\Http\Controllers\UsersController;
 Route::prefix('/books')->group(function(){
     Route::get('/',[BookController::class,"index"])->name("/allbooks");
     Route::get("/count",[BookController::class, 'CountBooks']);
-    Route::post("/create",[BookController::class, 'create']);
+    Route::post("/create",[BookController::class, 'store']);
     Route::put("/edit/{id}",[BookController::class, 'edit']);
     Route::delete("/delete/{id}", [BookController::class, 'destroy']);
     Route::get("/show/{id}", [BookController::class, 'show']);
+    Route::get('/search', [BookController::class, 'searchByTitle']);
 });
 
 // Authors route
 Route::get('/authors', [AuthorsController::class, 'index']);
 Route::get('/authors/{id}', [AuthorsController::class, 'show']);
+Route::get('/authors', [AuthorsController::class, 'search']);
 Route::post('/authors/create', [AuthorsController::class, 'create']);
 Route::put('/authors/{id}', [AuthorsController::class, 'update']);
 Route::delete('/authors/{id}', [AuthorsController::class, 'destroy']);
 
+
 //users rotue
-Route::get('/users', [UsersController::class, 'index']);
-Route::get('/users/{id}', [UsersController::class, 'show']);
-Route::post('/users/create', [UsersController::class, 'create']);
-Route::put('/users/{id}', [UsersController::class, 'update']);
-Route::delete('/users/{id}', [UsersController::class, 'destroy']);
+Route::get('/members', [MemberController::class, 'index']);
+Route::get('/members/{id}', [MemberController::class, 'show']);
+Route::post('/members', [MemberController::class, 'store']);
+Route::put('/members/{id}', [MemberController::class, 'update']);
+Route::delete('/members/{id}', [MemberController::class, 'destroy']);
 
 
 

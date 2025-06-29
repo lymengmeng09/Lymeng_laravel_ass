@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use Illuminate\Http\Request;
+use App\Http\Requests\BookStoreRequest;
+use App\Http\Requests\BookUpdateRequest;
+
 
 class BookController extends Controller
 {
@@ -21,22 +24,18 @@ class BookController extends Controller
      * Create a new book.
      * Route: POST /books/create
      */
-   public function create(Request $request)
+public function store(BookStoreRequest $request)
 {
-    $validated = $request->validate([
-        'title' => 'required|string',
-        'authorId' => 'required|string',
-        "publicationYear" => 'required|integer',
-        'isbn'=>'required|integer',
-        "genre" => 'required|string',
-        "availableCopies" => 'required|integer'
-    ]);
+    $book = Book::create($request->validated());
 
-    $book = Book::create($validated);
-
-    return response()->json($book, 201);
+    return response()->json([
+        'success' => true,
+        'message' => 'Book created successfully',
+        'data' => $book
+    ], 201);
 }
 
+ 
     /**
      * Show a single book by ID.
      * Route: GET /books/show/{id}
@@ -56,25 +55,22 @@ class BookController extends Controller
      * Update book details by ID.
      * Route: PUT /books/edit/{id}
      */
-    public function edit(Request $request, $id)
-    {
-        $book = Book::find($id);
+ public function update(BookUpdateRequest $request, $id)
+{
+    $book = Book::find($id);
 
-        if (!$book) {
-            return response()->json(['message' => 'Book not found'], 404);
-        }
-
-        $validated = $request->validate([
-            'title' => 'sometimes|required|string',
-            'authorId' => 'sometimes|required|string',
-            'year' => 'sometimes|required|integer',
-        ]);
-
-        $book->update($validated);
-
-        return response()->json($book);
+    if (!$book) {
+        return response()->json(['message' => 'Book not found'], 404);
     }
 
+    $book->update($request->validated());
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Book updated successfully',
+        'data' => $book
+    ]);
+}
     /**
      * Delete a book by ID.
      * Route: DELETE /books/delete/{id}
@@ -101,4 +97,24 @@ class BookController extends Controller
         $count = Book::count();
         return response()->json(['count' => $count]);
     }
+    public function searchByTitle(Request $request)
+{
+    $request->validate([
+        'title' => 'required|string',
+    ]);
+
+    $title = $request->input('title');
+
+    // Search books where title contains the search string, eager load author
+    $books = Book::with('author')
+        ->where('title', 'like', "%{$title}%")
+        ->get();
+
+    if ($books->isEmpty()) {
+        return response()->json(['message' => 'No books found with that title'], 404);
+    }
+
+    return response()->json($books);
 }
+}
+
